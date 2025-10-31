@@ -1,13 +1,3 @@
-
-"""
-Demo entry point for the postal_oop project.
-
-Run:
-  python main.py
-(or)
-  PYTHONPATH=. python main.py
-"""
-
 from __future__ import annotations
 from dataclasses import asdict
 from typing import List, Tuple
