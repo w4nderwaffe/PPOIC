@@ -159,7 +159,7 @@
 
 ## Results
 
-Fields: 112  
+Fields: 152  
 Behaviors: 102  
 Associations: 30  
 Exceptions: 12  
