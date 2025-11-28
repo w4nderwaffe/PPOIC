@@ -555,7 +555,7 @@ PostalService 12 12 → CashRegister, Courier, EmailNotifier, PostOffice, Postal
   - notify_all() — бизнес-операция класса
   - issue_receipt() — бизнес-операция класса
 
-## Associations (30)
+## Associations (55)
 Format: `ClassA → ClassB (краткое пояснение, файл: путь)`
 
 - AirFreight → TransportUnit (AirFreight использует TransportUnit в полях или методах; файл: postal_oop/logistics/AirFreight.py)
