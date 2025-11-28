@@ -213,39 +213,41 @@ ClaimStatusHistory 3 2 → Claim, User
 - Fields: id, claimId, changedAt
 - Methods: setStatus, revertStatus
 
+
 ## Associations (30)
 Format: `ClassA → ClassB (краткое пояснение, файл: путь)`
 
-1. Client → Address (defaultAddress — поле, хранит адрес клиента; файл: postal_oop/clients/Client.py)  
-2. Client → ContactInfo (contactInfo — контактные данные клиента; файл: postal_oop/clients/Client.py)  
-3. Sender → Client (sender ссылается на Client по clientId; файл: postal_oop/clients/Sender.py)  
-4. Sender → Address (адрес отправителя хранится в поле address; файл: postal_oop/clients/Sender.py)  
-5. Recipient → Address (адрес получателя — поле address; файл: postal_oop/clients/Recipient.py)  
-6. Parcel → Client (посылка относится к клиенту-отправителю; файл: postal_oop/shipments/Parcel.py)  
-7. Parcel → Tariff (расчёт цены зависит от Tariff; файл: postal_oop/shipments/Parcel.py)  
-8. Shipment → Parcel (shipment содержит ссылку на Parcel; файл: postal_oop/shipments/Shipment.py)  
-9. Shipment → Sender (shipment хранит отправителя; файл: postal_oop/shipments/Shipment.py)  
-10. Shipment → Recipient (shipment хранит получателя; файл: postal_oop/shipments/Shipment.py)  
-11. Shipment → PostOfficeBranch (shipment связан с текущим филиалом; файл: postal_oop/shipments/Shipment.py)  
-12. TrackingEvent → Shipment (trackingEvent относится к конкретному shipment; файл: postal_oop/tracking/TrackingEvent.py)  
-13. TrackingEvent → PostOfficeBranch (событие фиксируется в филиале; файл: postal_oop/tracking/TrackingEvent.py)  
-14. PostOfficeBranch → Shipment (филиал регистрирует входящие/исходящие отправления; файл: postal_oop/offices/PostOfficeBranch.py)  
+1. Client → Address (defaultAddress — поле, хранит адрес клиента; файл: postal_oop/domain/Client.py)  
+2. Client → ContactInfo (contactInfo — контактные данные клиента; файл: postal_oop/domain/Client.py)  
+3. Sender → Client (sender ссылается на Client по clientId; файл: postal_oop/domain/Sender.py)  
+4. Sender → Address (адрес отправителя хранится в поле address; файл: postal_oop/domain/Sender.py)  
+5. Recipient → Address (адрес получателя — поле address; файл: postal_oop/domain/Recipient.py)  
+6. Parcel → Client (посылка относится к клиенту-отправителю; файл: postal_oop/items/Parcel.py)  
+7. Parcel → Tariff (расчёт цены зависит от Tariff; файл: postal_oop/items/Parcel.py)  
+8. Shipment → Parcel (shipment содержит ссылку на Parcel; файл: postal_oop/items/Shipment.py)  
+9. Shipment → Sender (shipment хранит отправителя; файл: postal_oop/items/Shipment.py)  
+10. Shipment → Recipient (shipment хранит получателя; файл: postal_oop/items/Shipment.py)  
+11. Shipment → PostOfficeBranch (shipment связан с текущим филиалом; файл: postal_oop/logistics/PostOfficeBranch.py)  
+12. TrackingEvent → Shipment (trackingEvent относится к конкретному shipment; файл: postal_oop/logistics/TrackingEvent.py)  
+13. TrackingEvent → PostOfficeBranch (событие фиксируется в филиале; файл: postal_oop/logistics/TrackingEvent.py)  
+14. PostOfficeBranch → Shipment (филиал регистрирует входящие/исходящие отправления; файл: postal_oop/logistics/PostOfficeBranch.py)  
 15. SortingCenter → Shipment (центр сортировки обрабатывает отправления; файл: postal_oop/logistics/SortingCenter.py)  
 16. Route → RouteStop (маршрут содержит список остановок; файл: postal_oop/logistics/Route.py)  
 17. RouteStop → PostOfficeBranch (остановка маршрута привязана к филиалу; файл: postal_oop/logistics/RouteStop.py)  
 18. Vehicle → Route (транспорт назначается на маршрут; файл: postal_oop/logistics/Vehicle.py)  
 19. Vehicle → Courier (у транспорта есть ответственный курьер; файл: postal_oop/logistics/Vehicle.py)  
 20. Courier → PostOfficeBranch (курьер закреплён за филиалом; файл: postal_oop/logistics/Courier.py)  
-21. Tariff → Zone (тариф действует в определённых зонах; файл: postal_oop/pricing/Tariff.py)  
-22. Tariff → WeightRange (расчёт цены зависит от WeightRange; файл: postal_oop/pricing/Tariff.py)  
-23. Tariff → Dimension (учитываются габариты отправления; файл: postal_oop/pricing/Tariff.py)  
-24. Insurance → Parcel (страхование применяется к конкретной посылке; файл: postal_oop/pricing/Insurance.py)  
-25. Payment → Shipment (оплата относится к отправлению; файл: postal_oop/payments/Payment.py)  
-26. Payment → PaymentMethod (оплата произведена выбранным методом; файл: postal_oop/payments/Payment.py)  
-27. SupportTicket → Shipment (тикет привязан к проблемному отправлению; файл: postal_oop/support/SupportTicket.py)  
-28. SupportTicket → Client (тикет открыт клиентом; файл: postal_oop/support/SupportTicket.py)  
-29. SupportMessage → SupportTicket (сообщение принадлежит тикету; файл: postal_oop/support/SupportMessage.py)  
-30. Claim → Shipment (претензия подаётся по конкретному отправлению; файл: postal_oop/claims/Claim.py)  
+21. Tariff → Zone (тариф действует в определённых зонах; файл: postal_oop/operations/Tariff.py)  
+22. Tariff → WeightRange (расчёт цены зависит от WeightRange; файл: postal_oop/operations/Tariff.py)  
+23. Tariff → Dimension (учитываются габариты отправления; файл: postal_oop/operations/Tariff.py)  
+24. Insurance → Parcel (страхование применяется к конкретной посылке; файл: postal_oop/operations/Insurance.py)  
+25. Payment → Shipment (оплата относится к отправлению; файл: postal_oop/operations/Payment.py)  
+26. Payment → PaymentMethod (оплата произведена выбранным методом; файл: postal_oop/operations/Payment.py)  
+27. SupportTicket → Shipment (тикет привязан к проблемному отправлению; файл: postal_oop/services/SupportTicket.py)  
+28. SupportTicket → Client (тикет открыт клиентом; файл: postal_oop/services/SupportTicket.py)  
+29. SupportMessage → SupportTicket (сообщение принадлежит тикету; файл: postal_oop/services/SupportMessage.py)  
+30. Claim → Shipment (претензия подаётся по конкретному отправлению; файл: postal_oop/services/Claim.py)  
+
 
 ## Summary
 
@@ -258,5 +260,4 @@ The Postal Office System (Postal OOP) implements a full domain model for postal 
 - 12 custom exceptions describing typical error conditions in postal workflows
 
 The system structure mirrors the Online Shop lab format and is suitable as a detailed technical report for the postal laboratory work.
-
 
