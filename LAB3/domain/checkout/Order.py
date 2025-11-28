@@ -1,11 +1,5 @@
-from __future__ import annotations
 from dataclasses import dataclass
 from typing import List
-
-"""
-Order entity for Internet Shop lab.
-This file name equals the class name, per requirement.
-"""
 
 @dataclass
 class Order:
@@ -13,15 +7,20 @@ class Order:
     customer: "Customer"
     status: str = "NEW"
 
-    def place(self, items: List["OrderItem"]):
-        """Place order; mark as PLACED."""
-        self.status = "PLACED"
-        return True
+    def place(self, items: list):
+        """
+        Оформляет заказ, создавая OrderItem объекты.
+        Это и есть ассоциация Order → OrderItem.
+        """
+        from domain.checkout.OrderItem import OrderItem
 
-    def cancel(self):
-        """Cancel unless already shipped (raise otherwise)."""
-        if self.status == "SHIPPED":
-            from exceptions.OrderAlreadyShippedException import OrderAlreadyShippedException
-            raise OrderAlreadyShippedException("Order already shipped")
-        self.status = "CANCELLED"
-        return True
+        created_items = []
+        for idx, product in enumerate(items, start=1):
+            created_items.append(OrderItem(
+                id=idx,
+                order=self,
+                product=product
+            ))
+
+        self.status = "PLACED"
+        return created_items
