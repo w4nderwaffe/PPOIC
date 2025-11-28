@@ -3,7 +3,7 @@
 - Classes: 50
 - Fields: 150
 - Unique behaviors: 100
-- Associations: 30
+- Associations: 31
 - Exceptions: 12
 
 ## Exceptions (12)
@@ -236,7 +236,7 @@ Format: `ClassA → ClassB (краткое пояснение, файл: пут�
 4. CartItem → Cart (поле cart — ссылка на корзину; файл: domain/checkout/CartItem.py)  
 5. CartItem → Product (поле product — выбранный товар; файл: domain/checkout/CartItem.py)  
 6. Product → Category (поле category — принадлежность категории; файл: domain/catalog/Product.py)  
-7. Product → Brand (товар связан с брендом при добавлении продавца; файл: domain/users/Seller.py)  
+7. Seller → Brand (brand — поле, хранит ссылку на Brand; файл: domain/users/Seller.py)  
 8. InventoryItem → Product (product — товар на складе; файл: domain/catalog/InventoryItem.py)  
 9. Price → Product (цена относится к продукту; файл: domain/catalog/Price.py)  
 10. Price → Currency (currency — валюта цены; файл: domain/catalog/Price.py)  
@@ -260,7 +260,7 @@ Format: `ClassA → ClassB (краткое пояснение, файл: пут�
 28. Recommendation → Product (generate принимает список продуктов; файл: domain/loyalty/Recommendation.py)  
 29. Wishlist → Product (add/removeProduct работают с Product; файл: domain/loyalty/Wishlist.py)  
 30. AuthService → Session (login создаёт Session; файл: domain/security/AuthService.py)  
-
+31. Seller → Product (submitProduct принимает Product; файл: domain/users/Seller.py)
 
 ## Summary
 
@@ -269,7 +269,7 @@ The Online Shop System implements a realistic domain model for an e-commerce pla
 - 50 domain classes, each placed in its own file
 - 150 fields across these classes
 - 100 unique behaviors (methods with distinct responsibilities)
-- 30 explicit class associations, documented above
+- 31 explicit class associations, documented above
 - 12 custom exceptions for typical error scenarios in an online shop
 
 Unit tests (pytest) are provided and achieve more than 85% code coverage for the core business logic: catalog, checkout, payments, security, loyalty, and support modules.
