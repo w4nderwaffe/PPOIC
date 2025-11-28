@@ -1,263 +1,597 @@
 # README: Postal Office System (Postal OOP)
 
-- Classes: 50
-- Fields: 150
-- Unique behaviors: 100
-- Associations: 30
+- Classes: 63
+- Fields: 175
+- Unique behaviors: 141
+- Associations: 55
 - Exceptions: 12
 
 ## Exceptions (12)
 All custom exceptions are located in the `postal_oop/exceptions` package, each in its own class file.
 
-- InvalidAddressException — address is incomplete or structurally invalid
-- UnknownZipCodeException — zip/postal code is not recognized
-- ParcelTooHeavyException — parcel exceeds allowed weight
-- ParcelTooLargeException — parcel exceeds allowed dimensions
-- ProhibitedContentException — parcel contains forbidden items
-- ShipmentAlreadyDispatchedException — attempt to modify dispatched shipment
-- TrackingNumberNotFoundException — tracking number does not exist
-- DeliveryAttemptLimitExceededException — too many failed delivery attempts
-- PaymentDeclinedException — payment for shipment was declined
-- InsuranceNotAvailableException — insurance not applicable for this shipment
-- AccessDeniedException — user has no rights to perform this action
-- SupportTicketClosedException — cannot add messages to closed ticket
+- DuplicateTrackingError — дубликат трекинг-номера
+- InsufficientPostageError — недостаточная оплата пересылки
+- LockerOccupiedError — ячейка постамата уже занята
+- OversizeError — превышены габариты отправления
+- OverweightError — превышен допустимый вес
+- PaymentDeclinedError — платёж отклонён
+- ProhibitedContentError — запрещённое вложение в посылке
+- RoutingError — ошибка маршрутизации отправления
+- SortingError — ошибка сортировки на сортировочном центре
+- TrackingNotFoundError — трекинг-номер не найден
+- AddressInvalidError — некорректный почтовый адрес
+- DeliveryAttemptFailedError — неудачная попытка доставки
 
 ## Classes
 Format: `Class Fields Methods → Associations (used classes)`
 
-### Clients and Addresses
+### Core domain entities
 
-Client 3 2 → Address, ContactInfo, Shipment
-- Fields: id, defaultAddress, contactInfo
-- Methods: registerShipment, updateContactInfo
+Customer 3 3 → Person
+- Fields:
+  - loyalty_points — поле доменной модели
+  - preferred_office_id — поле доменной модели
+  - preferences — поле доменной модели
+- Methods:
+  - add_points() — добавление связанных данных
+  - set_preference() — бизнес-операция класса
+  - prefers_office() — бизнес-операция класса
 
-Sender 3 2 → Client, Address
-- Fields: id, clientId, address
-- Methods: validateSenderAddress, linkToClient
+InsurancePlan 4 2
+- Fields:
+  - code — поле доменной модели
+  - max_cover_value — поле доменной модели
+  - price_percent — поле доменной модели
+  - min_price — поле доменной модели
+- Methods:
+  - premium() — бизнес-операция класса
+  - can_cover() — бизнес-операция класса
 
-Recipient 3 2 → Address, Shipment
-- Fields: id, address, fullName
-- Methods: confirmDelivery, changeAddress
+Person 4 2
+- Fields:
+  - full_name — полное имя
+  - id_number — поле доменной модели
+  - phone — номер телефона
+  - email — email-адрес
+- Methods:
+  - short_name() — бизнес-операция класса
+  - has_contact() — бизнес-операция класса
 
-Address 4 2 → Client, Sender, Recipient
-- Fields: line1, city, zipCode, country
-- Methods: normalize, validate
+PostalAddress 6 4
+- Fields:
+  - street — поле доменной модели
+  - house — поле доменной модели
+  - postal_code — поле доменной модели
+  - city — поле доменной модели
+  - country — поле доменной модели
+  - apartment — поле доменной модели
+- Methods:
+  - formatted() — бизнес-операция класса
+  - validate() — валидация данных
+  - same_city() — бизнес-операция класса
+  - region_hint() — бизнес-операция класса
 
-ContactInfo 3 2 → Client, Sender, Recipient
-- Fields: email, phone, preferredChannel
-- Methods: verifyEmail, verifyPhone
+Postbox 5 4 → PostalAddress
+- Fields:
+  - id — идентификатор записи
+  - address — почтовой адрес
+  - max_items — поле доменной модели
+  - max_weight_kg — поле доменной модели
+  - _items_weights — поле доменной модели
+- Methods:
+  - can_accept() — бизнес-операция класса
+  - receive_item() — бизнес-операция класса
+  - pickup() — бизнес-операция класса
+  - load_factor() — бизнес-операция класса
 
-### Shipments and Parcels
+Postmark 4 3
+- Fields:
+  - office_id — поле доменной модели
+  - country — поле доменной модели
+  - code — поле доменной модели
+  - stamped_at — поле доменной модели
+- Methods:
+  - to_string() — бизнес-операция класса
+  - is_older_than() — бизнес-операция класса
+  - apply_to_text() — бизнес-операция класса
 
-Parcel 4 2 → Client, Sender, Recipient, Tariff
-- Fields: id, weightKg, declaredValue, contentsDescription
-- Methods: isHeavy, requiresInsurance
+Stamp 5 3
+- Fields:
+  - code — поле доменной модели
+  - face_value — поле доменной модели
+  - country — поле доменной модели
+  - issued_on — поле доменной модели
+  - cancelled — поле доменной модели
+- Methods:
+  - cancel() — бизнес-операция класса
+  - is_valid_for_country() — бизнес-операция класса
+  - value_left() — бизнес-операция класса
 
-Letter 3 2 → Sender, Recipient, Tariff
-- Fields: id, pagesCount, priority
-- Methods: markRegistered, isPriority
+Tariff 7 2
+- Fields:
+  - code — поле доменной модели
+  - name — название/имя
+  - base_price — поле доменной модели
+  - price_per_kg — поле доменной модели
+  - included_weight_kg — поле доменной модели
+  - zone — поле доменной модели
+  - priority — приоритет обработки/отправления
+- Methods:
+  - estimate() — бизнес-операция класса
+  - is_international() — бизнес-операция класса
 
-Package 4 2 → Sender, Recipient, Parcel
-- Fields: id, parcelCount, fragile, insured
-- Methods: markFragile, toggleInsurance
+WeightBand 2 1
+- Fields:
+  - max_weight_kg — поле доменной модели
+  - label — поле доменной модели
+- Methods:
+  - fits() — бизнес-операция класса
 
-Shipment 4 2 → Parcel, Sender, Recipient, PostOfficeBranch
-- Fields: id, trackingNumber, status, createdAt
-- Methods: dispatch, markDelivered
+### Domain & config
 
-ReturnShipment 3 2 → Shipment, Sender, Recipient
-- Fields: id, originalShipmentId, reason
-- Methods: startReturn, markCompleted
+DNSRecord 2 2
+- Fields:
+  - key — поле доменной модели
+  - value — поле доменной модели
+- Methods:
+  - as_tuple() — бизнес-операция класса
+  - matches() — бизнес-операция класса
 
-DeliveryAttempt 3 2 → Shipment, Recipient
-- Fields: id, attemptNo, timestamp
-- Methods: markSuccess, markFailed
+Domain 5 6 → DNSRecord
+- Fields:
+  - code — поле доменной модели
+  - name — название/имя
+  - offices — поле доменной модели
+  - centers — поле доменной модели
+  - records — поле доменной модели
+- Methods:
+  - add_office() — добавление связанных данных
+  - add_center() — добавление связанных данных
+  - add_record() — добавление связанных данных
+  - has_office() — бизнес-операция класса
+  - has_center() — бизнес-операция класса
+  - find_records() — бизнес-операция класса
 
-TrackingEvent 4 2 → Shipment, PostOfficeBranch
-- Fields: id, shipmentId, status, occurredAt
-- Methods: addNote, changeStatus
+ServerConfig 3 4 → Domain
+- Fields:
+  - domain — поле доменной модели
+  - hub_id — поле доменной модели
+  - allowed_zones — поле доменной модели
+- Methods:
+  - is_local_route() — бизнес-операция класса
+  - zone_for() — бизнес-операция класса
+  - knows_office() — бизнес-операция класса
+  - hub() — бизнес-операция класса
 
-### Offices, Logistics, Routes
+### Engines
 
-PostOfficeBranch 4 2 → Shipment, Employee
-- Fields: id, name, address, openingHours
-- Methods: registerIncoming, registerOutgoing
+PricingEngine 3 3 → InsurancePlan, PostalItem, Tariff, WeightBand
+- Fields:
+  - tariffs — поле доменной модели
+  - bands — поле доменной модели
+  - default_insurance — поле доменной модели
+- Methods:
+  - pick_tariff() — бизнес-операция класса
+  - in_band() — бизнес-операция класса
+  - calculate() — расчётное действие
 
-SortingCenter 3 2 → Shipment, Route
-- Fields: id, name, capacity
-- Methods: enqueueShipment, forwardShipment
+RoutingEngine 0 1 → PostalAddress, Route
+- Methods:
+  - plan() — бизнес-операция класса
 
-Route 3 2 → RouteStop, Vehicle
-- Fields: id, name, active
-- Methods: addStop, activate
+SortingEngine 0 2 → PostalItem
+- Methods:
+  - choose_center() — бизнес-операция класса
+  - barcode_ok() — бизнес-операция класса
 
-RouteStop 3 2 → PostOfficeBranch, SortingCenter
-- Fields: id, sequenceNo, locationCode
-- Methods: setSequence, linkLocation
+### Postal items
 
-Vehicle 4 2 → Route, Courier
-- Fields: id, plateNumber, capacityKg, type
-- Methods: assignCourier, canCarry
+FragileParcel 1 2 → Parcel
+- Fields:
+  - fragile_fee — поле доменной модели
+- Methods:
+  - total_price() — бизнес-операция класса
+  - handling_note() — бизнес-операция класса
 
-Courier 3 2 → Vehicle, PostOfficeBranch
-- Fields: id, name, currentBranch
-- Methods: assignRoute, markAvailable
+InsuredParcel 1 3 → AttachmentList, Parcel
+- Fields:
+  - attachment — поле доменной модели
+- Methods:
+  - require_insurance() — бизнес-операция класса
+  - total_price() — бизнес-операция класса
+  - claim_value() — бизнес-операция класса
 
-DeliverySchedule 3 2 → Courier, Route
-- Fields: id, dayOfWeek, timeWindow
-- Methods: assignCourier, reschedule
+Letter 0 1 → PostalItem
+- Methods:
+  - service_limits() — бизнес-операция класса
 
-Container 3 2 → Shipment, SortingCenter
-- Fields: id, capacity, sealed
-- Methods: seal, unseal
+OversizedParcel 1 2 → Parcel
+- Fields:
+  - oversize_fee — поле доменной модели
+- Methods:
+  - service_limits() — бизнес-операция класса
+  - total_price() — бизнес-операция класса
 
-Bag 3 2 → Shipment, Container
-- Fields: id, code, sealed
-- Methods: putIntoContainer, seal
+Parcel 0 1 → PostalItem
+- Methods:
+  - service_limits() — бизнес-операция класса
 
-Manifest 3 2 → Container, Shipment
-- Fields: id, containerId, createdAt
-- Methods: addShipment, closeManifest
+PostalItem 10 6 → InsurancePlan, PostalAddress, Postmark, Tariff
+- Fields:
+  - tracking_id — трекинг-идентификатор
+  - sender — отправитель
+  - recipient — получатель
+  - weight_kg — вес в килограммах
+  - size_cm — поле доменной модели
+  - stamps_value — поле доменной модели
+  - tariff — тариф для расчёта стоимости
+  - insurance_plan — поле доменной модели
+  - postmarks — поле доменной модели
+  - declared_value — поле доменной модели
+- Methods:
+  - service_limits() — бизнес-операция класса
+  - check_limits() — бизнес-операция класса
+  - add_postmark() — добавление связанных данных
+  - base_price() — бизнес-операция класса
+  - total_price() — бизнес-операция класса
+  - verify_postage() — валидация данных
 
-### Pricing and Payments
+Postcard 0 1 → PostalItem
+- Methods:
+  - service_limits() — бизнес-операция класса
 
-Tariff 4 2 → Zone, WeightRange, Dimension
-- Fields: id, name, basePrice, currency
-- Methods: calculatePrice, isApplicable
+ProhibitedItemCheck 1 1 → AttachmentList
+- Fields:
+  - prohibited_keywords — поле доменной модели
+- Methods:
+  - scan() — бизнес-операция класса
 
-Zone 3 2 → Tariff, Address
-- Fields: id, name, regionCode
-- Methods: matchesAddress, addCountry
+RegisteredLetter 1 1 → Letter
+- Fields:
+  - registration_fee — поле доменной модели
+- Methods:
+  - total_price() — бизнес-операция класса
 
-WeightRange 3 2 → Tariff
-- Fields: minKg, maxKg, surcharge
-- Methods: includesWeight, applySurcharge
+SmallPackage 0 1 → Parcel
+- Methods:
+  - service_limits() — бизнес-операция класса
 
-Dimension 3 2 → Parcel
-- Fields: lengthCm, widthCm, heightCm
-- Methods: volume, isOversize
+AttachmentList 3 3 → CustomsDeclaration
+- Fields:
+  - documents — поле доменной модели
+  - customs — поле доменной модели
+  - items — список вложений/отправлений
+- Methods:
+  - add() — добавление связанных данных
+  - total_weight() — бизнес-операция класса
+  - keywords() — бизнес-операция класса
 
-Insurance 3 2 → Parcel, Tariff
-- Fields: enabled, rate, maxCoverage
-- Methods: calculateFee, isAllowed
+CODParcel 1 2 → Parcel
+- Fields:
+  - cod_amount — поле доменной модели
+- Methods:
+  - requires_cod() — бизнес-операция класса
+  - collect_cod() — бизнес-операция класса
 
-Payment 4 2 → Client, Shipment, PaymentMethod
-- Fields: id, clientId, amount, status
-- Methods: markPaid, markDeclined
+CustomsDeclaration 5 2
+- Fields:
+  - content_description — поле доменной модели
+  - value_eur — поле доменной модели
+  - country_of_origin — поле доменной модели
+  - hs_code — поле доменной модели
+  - is_document — поле доменной модели
+- Methods:
+  - requires_declaration() — бизнес-операция класса
+  - estimate_duties() — бизнес-операция класса
 
-PaymentMethod 3 2 → Client
-- Fields: id, type, maskedDetails
-- Methods: activate, deactivate
+### Logistics & transport
 
-Receipt 3 2 → Payment, Shipment
-- Fields: id, paymentId, issuedAt
-- Methods: renderPdf, sendToClient
+Courier 7 6 → PostalAddress, TransportUnit
+- Fields:
+  - id — идентификатор записи
+  - unit — поле доменной модели
+  - name — название/имя
+  - full_name — полное имя
+  - planned_stops — поле доменной модели
+  - current_load_kg — поле доменной модели
+  - _cursor — поле доменной модели
+- Methods:
+  - assign_route() — бизнес-операция класса
+  - next_stop() — бизнес-операция класса
+  - advance() — бизнес-операция класса
+  - load() — бизнес-операция класса
+  - unload() — бизнес-операция класса
+  - attempt_delivery() — бизнес-операция класса
 
-Invoice 3 2 → Client, Shipment
-- Fields: id, clientId, dueDate
-- Methods: markSent, markPaid
+CourierRoutePlan 2 3 → PostalAddress
+- Fields:
+  - courier_id — поле доменной модели
+  - stops — поле доменной модели
+- Methods:
+  - add_stop() — добавление связанных данных
+  - next_after() — бизнес-операция класса
+  - total_stops() — бизнес-операция класса
 
-### Tracking, Security, Users
+Locker 4 5 → PostalAddress
+- Fields:
+  - id — идентификатор записи
+  - location — поле доменной модели
+  - max_weight_per_cell_kg — поле доменной модели
+  - cells — поле доменной модели
+- Methods:
+  - add_cell() — добавление связанных данных
+  - is_free() — бизнес-операция класса
+  - reserve() — бизнес-операция класса
+  - put() — бизнес-операция класса
+  - pickup() — бизнес-операция класса
 
-User 3 2 → Client, Employee
-- Fields: id, username, role
-- Methods: enable, disable
+PostOffice 5 5 → PostalAddress, PostalItem
+- Fields:
+  - id — идентификатор записи
+  - address — почтовой адрес
+  - services — поле доменной модели
+  - cash_balance — поле доменной модели
+  - queue_counter — поле доменной модели
+- Methods:
+  - issue_queue_ticket() — бизнес-операция класса
+  - accept_item() — бизнес-операция класса
+  - deliver_item() — бизнес-операция класса
+  - receive_payment() — бизнес-операция класса
+  - payout_cod() — бизнес-операция класса
 
-Employee 3 2 → PostOfficeBranch
-- Fields: id, name, position
-- Methods: assignBranch, changePosition
+Route 3 2
+- Fields:
+  - id — идентификатор записи
+  - nodes — поле доменной модели
+  - zone — поле доменной модели
+- Methods:
+  - next_after() — бизнес-операция класса
+  - total_hops() — бизнес-операция класса
 
-AuthSession 3 2 → User
-- Fields: id, userId, expiresAt
-- Methods: refresh, invalidate
+SortingCenter 4 5 → PostalItem
+- Fields:
+  - id — идентификатор записи
+  - name — название/имя
+  - capacity — поле доменной модели
+  - queue — поле доменной модели
+- Methods:
+  - enqueue() — бизнес-операция класса
+  - dequeue() — бизнес-операция класса
+  - route_hint() — бизнес-операция класса
+  - has_item() — бизнес-операция класса
+  - queue_size() — бизнес-операция класса
 
-ApiToken 3 2 → User
-- Fields: id, token, scope
-- Methods: rotate, revoke
+TrainCar 4 1 → TransportUnit
+- Fields:
+  - id — идентификатор записи
+  - number — поле доменной модели
+  - unit — поле доменной модели
+  - gauge_mm — поле доменной модели
+- Methods:
+  - axle_load_ok() — бизнес-операция класса
 
-AuditLog 3 2 → User
-- Fields: id, userId, createdAt
-- Methods: recordAction, findForUser
+TransportUnit 5 3
+- Fields:
+  - id — идентификатор записи
+  - kind — поле доменной модели
+  - max_load_kg — поле доменной модели
+  - current_load_kg — поле доменной модели
+  - location_node_id — поле доменной модели
+- Methods:
+  - can_load() — бизнес-операция класса
+  - load() — бизнес-операция класса
+  - unload() — бизнес-операция класса
 
-SystemEvent 3 2 → Shipment
-- Fields: id, type, payload
-- Methods: parsePayload, affectsShipment
+Truck 5 1 → TransportUnit
+- Fields:
+  - id — идентификатор записи
+  - plate — поле доменной модели
+  - unit — поле доменной модели
+  - axle_count — поле доменной модели
+  - refrigerated — поле доменной модели
+- Methods:
+  - fuel_needed() — бизнес-операция класса
 
-### Communication and Support
+Van 4 1 → TransportUnit
+- Fields:
+  - id — идентификатор записи
+  - plate — поле доменной модели
+  - unit — поле доменной модели
+  - doors — поле доменной модели
+- Methods:
+  - city_efficiency() — бизнес-операция класса
 
-Notification 3 2 → User
-- Fields: id, channel, createdAt
-- Methods: send, markRead
+AirFreight 4 1 → TransportUnit
+- Fields:
+  - id — идентификатор записи
+  - flight — поле доменной модели
+  - unit — поле доменной модели
+  - icao — поле доменной модели
+- Methods:
+  - iata_label() — бизнес-операция класса
 
-EmailMessage 3 2 → Notification, Client
-- Fields: id, toAddress, subject
-- Methods: render, dispatch
+### Notifications
 
-SMSMessage 3 2 → Notification, Client
-- Fields: id, phoneNumber, text
-- Methods: truncateIfNeeded, dispatch
+EmailNotifier 1 1
+- Fields:
+  - from_addr — поле доменной модели
+- Methods:
+  - send_status_update() — отправка/инициация операции
 
-SupportTicket 3 2 → Client, Shipment
-- Fields: id, clientId, status
-- Methods: addMessage, close
+PushNotifier 1 1
+- Fields:
+  - provider — поле доменной модели
+- Methods:
+  - send_status_update() — отправка/инициация операции
 
-SupportMessage 3 2 → SupportTicket, User
-- Fields: id, ticketId, authorId
-- Methods: edit, redactPII
+SMSNotifier 1 1
+- Fields:
+  - sender_id — поле доменной модели
+- Methods:
+  - send_status_update() — отправка/инициация операции
 
-Claim 3 2 → Shipment, Client
-- Fields: id, shipmentId, status
-- Methods: approve, reject
+### Operations & tracking
 
-ClaimStatusHistory 3 2 → Claim, User
-- Fields: id, claimId, changedAt
-- Methods: setStatus, revertStatus
+CashRegister 4 4
+- Fields:
+  - id — идентификатор записи
+  - opened — поле доменной модели
+  - balance — поле доменной модели
+  - payments_log — поле доменной модели
+- Methods:
+  - open_shift() — бизнес-операция класса
+  - close_shift() — бизнес-операция класса
+  - accept_payment() — бизнес-операция класса
+  - refund() — бизнес-операция класса
 
+Manifest 6 6 → Shipment
+- Fields:
+  - id — идентификатор записи
+  - route_id — поле доменной модели
+  - shipments — поле доменной модели
+  - shipment_id — поле доменной модели
+  - _entries — поле доменной модели
+  - _weight_kg — поле доменной модели
+- Methods:
+  - add() — добавление связанных данных
+  - add_entry() — добавление связанных данных
+  - total_items() — бизнес-операция класса
+  - total_weight() — бизнес-операция класса
+  - ids() — бизнес-операция класса
+  - has_tracking() — бизнес-операция класса
+
+Payment 5 2
+- Fields:
+  - id — идентификатор записи
+  - amount — сумма операции
+  - currency — поле доменной модели
+  - method — поле доменной модели
+  - approved — поле доменной модели
+- Methods:
+  - authorize() — бизнес-операция класса
+  - is_cash() — бизнес-операция класса
+
+QueueTicket 4 3
+- Fields:
+  - office_id — поле доменной модели
+  - number — поле доменной модели
+  - issued_at — поле доменной модели
+  - served_at — поле доменной модели
+- Methods:
+  - code() — бизнес-операция класса
+  - mark_served() — изменение статуса/пометка
+  - wait_time_min() — бизнес-операция класса
+
+Receipt 4 3
+- Fields:
+  - id — идентификатор записи
+  - payment_id — поле доменной модели
+  - items — список вложений/отправлений
+  - footer_note — поле доменной модели
+- Methods:
+  - add_item() — добавление связанных данных
+  - total() — бизнес-операция класса
+  - render_text() — бизнес-операция класса
+
+Shipment 7 3 → TransportUnit
+- Fields:
+  - id — идентификатор записи
+  - route_id — поле доменной модели
+  - unit — поле доменной модели
+  - item_ids — поле доменной модели
+  - total_weight_kg — поле доменной модели
+  - departed — поле доменной модели
+  - arrived — поле доменной модели
+- Methods:
+  - add_item() — добавление связанных данных
+  - depart() — бизнес-операция класса
+  - arrive() — бизнес-операция класса
+
+TrackingEvent 5 2
+- Fields:
+  - tracking_id — трекинг-идентификатор
+  - status — текущий статус
+  - location_node_id — поле доменной модели
+  - timestamp — поле доменной модели
+  - note — поле доменной модели
+- Methods:
+  - as_dict() — бизнес-операция класса
+  - is_final() — бизнес-операция класса
+
+TrackingId 1 2
+- Fields:
+  - code — поле доменной модели
+- Methods:
+  - new() — бизнес-операция класса
+  - normalized() — бизнес-операция класса
+
+### Services
+
+PostalService 12 12 → CashRegister, Courier, EmailNotifier, PostOffice, PostalItem, PricingEngine, PushNotifier, Receipt, Route, RoutingEngine, SMSNotifier, ServerConfig, SortingCenter, SortingEngine, TrackingEvent
+- Fields:
+  - config — поле доменной модели
+  - pricing — поле доменной модели
+  - routing — поле доменной модели
+  - sorting — поле доменной модели
+  - offices — поле доменной модели
+  - centers — поле доменной модели
+  - registers — поле доменной модели
+  - track_events — поле доменной модели
+  - registry_items — поле доменной модели
+  - sms — поле доменной модели
+  - email — email-адрес
+  - push — поле доменной модели
+- Methods:
+  - register_office() — регистрация сущности/операции
+  - register_center() — регистрация сущности/операции
+  - add_event() — добавление связанных данных
+  - history() — бизнес-операция класса
+  - register_item() — регистрация сущности/операции
+  - quote() — бизнес-операция класса
+  - accept_at_office() — бизнес-операция класса
+  - plan_route() — бизнес-операция класса
+  - handover_to_center() — бизнес-операция класса
+  - deliver_by_courier() — бизнес-операция класса
+  - notify_all() — бизнес-операция класса
+  - issue_receipt() — бизнес-операция класса
 
 ## Associations (30)
 Format: `ClassA → ClassB (краткое пояснение, файл: путь)`
 
-1. Client → Address (defaultAddress — поле, хранит адрес клиента; файл: postal_oop/domain/Client.py)  
-2. Client → ContactInfo (contactInfo — контактные данные клиента; файл: postal_oop/domain/Client.py)  
-3. Sender → Client (sender ссылается на Client по clientId; файл: postal_oop/domain/Sender.py)  
-4. Sender → Address (адрес отправителя хранится в поле address; файл: postal_oop/domain/Sender.py)  
-5. Recipient → Address (адрес получателя — поле address; файл: postal_oop/domain/Recipient.py)  
-6. Parcel → Client (посылка относится к клиенту-отправителю; файл: postal_oop/items/Parcel.py)  
-7. Parcel → Tariff (расчёт цены зависит от Tariff; файл: postal_oop/items/Parcel.py)  
-8. Shipment → Parcel (shipment содержит ссылку на Parcel; файл: postal_oop/items/Shipment.py)  
-9. Shipment → Sender (shipment хранит отправителя; файл: postal_oop/items/Shipment.py)  
-10. Shipment → Recipient (shipment хранит получателя; файл: postal_oop/items/Shipment.py)  
-11. Shipment → PostOfficeBranch (shipment связан с текущим филиалом; файл: postal_oop/logistics/PostOfficeBranch.py)  
-12. TrackingEvent → Shipment (trackingEvent относится к конкретному shipment; файл: postal_oop/logistics/TrackingEvent.py)  
-13. TrackingEvent → PostOfficeBranch (событие фиксируется в филиале; файл: postal_oop/logistics/TrackingEvent.py)  
-14. PostOfficeBranch → Shipment (филиал регистрирует входящие/исходящие отправления; файл: postal_oop/logistics/PostOfficeBranch.py)  
-15. SortingCenter → Shipment (центр сортировки обрабатывает отправления; файл: postal_oop/logistics/SortingCenter.py)  
-16. Route → RouteStop (маршрут содержит список остановок; файл: postal_oop/logistics/Route.py)  
-17. RouteStop → PostOfficeBranch (остановка маршрута привязана к филиалу; файл: postal_oop/logistics/RouteStop.py)  
-18. Vehicle → Route (транспорт назначается на маршрут; файл: postal_oop/logistics/Vehicle.py)  
-19. Vehicle → Courier (у транспорта есть ответственный курьер; файл: postal_oop/logistics/Vehicle.py)  
-20. Courier → PostOfficeBranch (курьер закреплён за филиалом; файл: postal_oop/logistics/Courier.py)  
-21. Tariff → Zone (тариф действует в определённых зонах; файл: postal_oop/operations/Tariff.py)  
-22. Tariff → WeightRange (расчёт цены зависит от WeightRange; файл: postal_oop/operations/Tariff.py)  
-23. Tariff → Dimension (учитываются габариты отправления; файл: postal_oop/operations/Tariff.py)  
-24. Insurance → Parcel (страхование применяется к конкретной посылке; файл: postal_oop/operations/Insurance.py)  
-25. Payment → Shipment (оплата относится к отправлению; файл: postal_oop/operations/Payment.py)  
-26. Payment → PaymentMethod (оплата произведена выбранным методом; файл: postal_oop/operations/Payment.py)  
-27. SupportTicket → Shipment (тикет привязан к проблемному отправлению; файл: postal_oop/services/SupportTicket.py)  
-28. SupportTicket → Client (тикет открыт клиентом; файл: postal_oop/services/SupportTicket.py)  
-29. SupportMessage → SupportTicket (сообщение принадлежит тикету; файл: postal_oop/services/SupportMessage.py)  
-30. Claim → Shipment (претензия подаётся по конкретному отправлению; файл: postal_oop/services/Claim.py)  
-
+- AirFreight → TransportUnit (AirFreight использует TransportUnit в полях или методах; файл: postal_oop/logistics/AirFreight.py)
+- AttachmentList → CustomsDeclaration (AttachmentList использует CustomsDeclaration в полях или методах; файл: postal_oop/items/AttachmentList.py)
+- CODParcel → Parcel (CODParcel работает с посылкой Parcel; файл: postal_oop/items/CODParcel.py)
+- Courier → PostalAddress (Courier использует PostalAddress для работы с адресами; файл: postal_oop/logistics/Courier.py)
+- Courier → TransportUnit (Courier использует TransportUnit в полях или методах; файл: postal_oop/logistics/Courier.py)
+- CourierRoutePlan → PostalAddress (CourierRoutePlan использует PostalAddress для работы с адресами; файл: postal_oop/logistics/CourierRoutePlan.py)
+- Customer → Person (Customer наследует Person (клиент — частный случай персоны); файл: postal_oop/core/Customer.py)
+- Domain → DNSRecord (Domain использует DNSRecord в полях или методах; файл: postal_oop/domain/Domain.py)
+- FragileParcel → Parcel (FragileParcel работает с посылкой Parcel; файл: postal_oop/items/FragileParcel.py)
+- InsuredParcel → AttachmentList (InsuredParcel использует AttachmentList в полях или методах; файл: postal_oop/items/InsuredParcel.py)
+- InsuredParcel → Parcel (InsuredParcel работает с посылкой Parcel; файл: postal_oop/items/InsuredParcel.py)
+- Letter → PostalItem (Letter специализация или обработка базового PostalItem; файл: postal_oop/items/Letter.py)
+- Locker → PostalAddress (Locker использует PostalAddress для работы с адресами; файл: postal_oop/logistics/Locker.py)
+- Manifest → Shipment (Manifest использует Shipment в полях или методах; файл: postal_oop/operations/Manifest.py)
+- OversizedParcel → Parcel (OversizedParcel работает с посылкой Parcel; файл: postal_oop/items/OversizedParcel.py)
+- Parcel → PostalItem (Parcel специализация или обработка базового PostalItem; файл: postal_oop/items/Parcel.py)
+- PostOffice → PostalAddress (PostOffice использует PostalAddress для работы с адресами; файл: postal_oop/logistics/PostOffice.py)
+- PostOffice → PostalItem (PostOffice специализация или обработка базового PostalItem; файл: postal_oop/logistics/PostOffice.py)
+- PostalItem → InsurancePlan (PostalItem использует InsurancePlan в полях или методах; файл: postal_oop/items/PostalItem.py)
+- PostalItem → PostalAddress (PostalItem использует PostalAddress для работы с адресами; файл: postal_oop/items/PostalItem.py)
+- PostalItem → Postmark (PostalItem использует Postmark в полях или методах; файл: postal_oop/items/PostalItem.py)
+- PostalItem → Tariff (PostalItem использует Tariff в полях или методах; файл: postal_oop/items/PostalItem.py)
+- PostalService → CashRegister (PostalService координирует CashRegister; файл: postal_oop/services/PostalService.py)
+- PostalService → Courier (PostalService координирует Courier; файл: postal_oop/services/PostalService.py)
+- PostalService → EmailNotifier (PostalService отправляет уведомления через EmailNotifier; файл: postal_oop/services/PostalService.py)
+- PostalService → PostOffice (PostalService координирует PostOffice; файл: postal_oop/services/PostalService.py)
+- PostalService → PostalItem (PostalService специализация или обработка базового PostalItem; файл: postal_oop/services/PostalService.py)
+- PostalService → PricingEngine (PostalService координирует PricingEngine; файл: postal_oop/services/PostalService.py)
+- PostalService → PushNotifier (PostalService отправляет уведомления через PushNotifier; файл: postal_oop/services/PostalService.py)
+- PostalService → Receipt (PostalService координирует Receipt; файл: postal_oop/services/PostalService.py)
 
 ## Summary
 
-The Postal Office System (Postal OOP) implements a full domain model for postal operations:
+The Postal Office System (Postal OOP) implements a full domain model for postal operations based on core entities, postal items, logistics, tariffs, operations and services. 
+This README describes the real class structure of the project: exceptions, classes grouped by packages with short Russian explanations for fields and methods, and 30 sample associations between them, with Russian explanations and file paths that match the actual architecture.
 
-- 50 domain classes, each in its own file under the `postal_oop` package
-- 150 fields, covering clients, shipments, logistics, pricing, payments, tracking, support
-- 100 unique behaviors (methods) representing business rules and operations
-- 30 explicit class associations with short Russian explanations and file paths
-- 12 custom exceptions describing typical error conditions in postal workflows
-
-The system structure mirrors the Online Shop lab format and is suitable as a detailed technical report for the postal laboratory work.
 
