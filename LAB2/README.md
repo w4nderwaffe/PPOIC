@@ -3,7 +3,7 @@
 - Classes: 63
 - Fields: 175
 - Unique behaviors: 141
-- Associations: 55
+- Associations: 47
 - Exceptions: 12
 
 ## Exceptions (12)
