@@ -580,14 +580,6 @@ Format: `ClassA → ClassB (краткое пояснение, файл: пут�
 - PostalItem → PostalAddress (PostalItem использует PostalAddress для работы с адресами; файл: postal_oop/items/PostalItem.py)
 - PostalItem → Postmark (PostalItem использует Postmark в полях или методах; файл: postal_oop/items/PostalItem.py)
 - PostalItem → Tariff (PostalItem использует Tariff в полях или методах; файл: postal_oop/items/PostalItem.py)
-- PostalService → CashRegister (PostalService координирует CashRegister; файл: postal_oop/services/PostalService.py)
-- PostalService → Courier (PostalService координирует Courier; файл: postal_oop/services/PostalService.py)
-- PostalService → EmailNotifier (PostalService отправляет уведомления через EmailNotifier; файл: postal_oop/services/PostalService.py)
-- PostalService → PostOffice (PostalService координирует PostOffice; файл: postal_oop/services/PostalService.py)
-- PostalService → PostalItem (PostalService специализация или обработка базового PostalItem; файл: postal_oop/services/PostalService.py)
-- PostalService → PricingEngine (PostalService координирует PricingEngine; файл: postal_oop/services/PostalService.py)
-- PostalService → PushNotifier (PostalService отправляет уведомления через PushNotifier; файл: postal_oop/services/PostalService.py)
-- PostalService → Receipt (PostalService координирует Receipt; файл: postal_oop/services/PostalService.py)
 
 ## Summary
 
