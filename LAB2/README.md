@@ -555,7 +555,7 @@ PostalService 12 12 → CashRegister, Courier, EmailNotifier, PostOffice, Postal
   - notify_all() — бизнес-операция класса
   - issue_receipt() — бизнес-операция класса
 
-## Associations (55)
+## Associations (47)
 Format: `ClassA → ClassB (краткое пояснение, файл: путь)`
 
 - AirFreight → TransportUnit (AirFreight использует TransportUnit в полях или методах; файл: postal_oop/logistics/AirFreight.py)
@@ -584,6 +584,6 @@ Format: `ClassA → ClassB (краткое пояснение, файл: пут�
 ## Summary
 
 The Postal Office System (Postal OOP) implements a full domain model for postal operations based on core entities, postal items, logistics, tariffs, operations and services. 
-This README describes the real class structure of the project: exceptions, classes grouped by packages with short Russian explanations for fields and methods, and 55 sample associations between them, with Russian explanations and file paths that match the actual architecture.
+This README describes the real class structure of the project: exceptions, classes grouped by packages with short Russian explanations for fields and methods, and 47 sample associations between them, with Russian explanations and file paths that match the actual architecture.
 
 
