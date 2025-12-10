@@ -1,40 +1,62 @@
-
 class CocktailSort:
     """
     Cocktail sort (bidirectional bubble sort).
-    API:
-        - sort_inplace(seq, key=None, reverse=False) -> None
-        - sort(seq, key=None, reverse=False) -> list
-    Works with any mutable sequence that supports indexing and assignment.
+
+    Объектный вариант:
+      - key и reverse задаются в конструкторе
+      - sort_inplace(self, seq) сортирует последовательность на месте
+      - sort(self, seq) возвращает новый отсортированный список
     """
-    @staticmethod
-    def sort_inplace(seq, key=None, reverse=False):
-        if key is None:
-            key = lambda x: x
+
+    def __init__(self, key=None, reverse: bool = False):
+        # key — функция извлечения ключа сортировки
+        # reverse — если True, сортировка по убыванию
+        self.key = key if key is not None else (lambda x: x)
+        self.reverse = reverse
+
+    def sort_inplace(self, seq):
+        """
+        Сортирует последовательность на месте алгоритмом Cocktail sort.
+        Работает с любым изменяемым индексируемым контейнером (например, list).
+        """
         n = len(seq)
         if n < 2:
             return
+
+        key = self.key
+        reverse = self.reverse
+
         start = 0
         end = n - 1
         swapped = True
+
         while swapped:
             swapped = False
+
+            # Проход слева направо
             for i in range(start, end):
-                if (key(seq[i]) > key(seq[i+1])) ^ reverse:
-                    seq[i], seq[i+1] = seq[i+1], seq[i]
+                if (key(seq[i]) > key(seq[i + 1])) ^ reverse:
+                    seq[i], seq[i + 1] = seq[i + 1], seq[i]
                     swapped = True
+
             if not swapped:
                 break
+
             swapped = False
             end -= 1
-            for i in range(end-1, start-1, -1):
-                if (key(seq[i]) > key(seq[i+1])) ^ reverse:
-                    seq[i], seq[i+1] = seq[i+1], seq[i]
+
+            # Проход справа налево
+            for i in range(end - 1, start - 1, -1):
+                if (key(seq[i]) > key(seq[i + 1])) ^ reverse:
+                    seq[i], seq[i + 1] = seq[i + 1], seq[i]
                     swapped = True
+
             start += 1
 
-    @staticmethod
-    def sort(seq, key=None, reverse=False):
+    def sort(self, seq):
+        """
+        Возвращает новый отсортированный список, не изменяя исходную последовательность.
+        """
         seq_copy = list(seq)
-        CocktailSort.sort_inplace(seq_copy, key=key, reverse=reverse)
+        self.sort_inplace(seq_copy)
         return seq_copy
