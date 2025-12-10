@@ -1,37 +1,63 @@
-
 class StrandSort:
     """
-    Strand sort.
-    API:
-        - sort(seq, key=None, reverse=False) -> list
-        - sort_inplace(seq, key=None, reverse=False) -> None (replaces contents of list)
-    Works for sequences; returns a new sorted list. For in-place, pass a list.
+    Strand sort — сортировка на основе выделения возрастающих подпоследовательностей
+    и их последующего слияния.
+
+    Объектный вариант:
+      - key и reverse задаются в конструкторе
+      - sort(self, seq) возвращает новый отсортированный список
+      - sort_inplace(self, seq) заменяет содержимое списка отсортированным
     """
-    @staticmethod
-    def _merge(a, b, key, reverse):
+
+    def __init__(self, key=None, reverse: bool = False):
+        self.key = key if key is not None else (lambda x: x)
+        self.reverse = reverse
+
+    def _merge(self, a, b):
+        """
+        Сливает два отсортированных списка a и b в один отсортированный.
+        Учитывает key и reverse из состояния объекта.
+        """
         res = []
         i = j = 0
+        key = self.key
+        reverse = self.reverse
+
         while i < len(a) and j < len(b):
-            cond = (key(a[i]) <= key(b[j]))
+            cond = key(a[i]) <= key(b[j])
             if reverse:
                 cond = not cond
+
             if cond:
-                res.append(a[i]); i += 1
+                res.append(a[i])
+                i += 1
             else:
-                res.append(b[j]); j += 1
-        if i < len(a): res.extend(a[i:])
-        if j < len(b): res.extend(b[j:])
+                res.append(b[j])
+                j += 1
+
+        if i < len(a):
+            res.extend(a[i:])
+        if j < len(b):
+            res.extend(b[j:])
+
         return res
 
-    @staticmethod
-    def sort(seq, key=None, reverse=False):
-        if key is None:
-            key = lambda x: x
+    def sort(self, seq):
+        """
+        Возвращает новый список, отсортированный алгоритмом Strand sort.
+        Исходная последовательность не изменяется.
+        """
+        key = self.key
+        reverse = self.reverse
         v = list(seq)
+
         if len(v) < 2:
             return v
+
         output = []
+
         while v:
+            # Формируем одну возрастающую подпоследовательность (strand)
             strand = [v.pop(0)]
             i = 0
             while i < len(v):
@@ -39,14 +65,15 @@ class StrandSort:
                     strand.append(v.pop(i))
                 else:
                     i += 1
-            output = StrandSort._merge(output, strand, key, reverse)
+
+            # Сливаем полученный strand с текущим результатом
+            output = self._merge(output, strand)
+
         return output
 
-    @staticmethod
-    def sort_inplace(seq, key=None, reverse=False):
-        sorted_list = StrandSort.sort(seq, key=key, reverse=reverse)
-        # replace contents in place if possible
-        if hasattr(seq, '__setitem__') and hasattr(seq, '__delitem__'):
-            seq[:] = sorted_list
-        else:
-            raise TypeError("sort_inplace requires a mutable sequence (like list).")
+    def sort_inplace(self, seq):
+        """
+        Сортирует изменяемую последовательность (список) на месте.
+        """
+        sorted_list = self.sort(seq)
+        seq[:] = sorted_list
