@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback</title>
+</head>
+<body>
+
+<h1>View Feedback</h1>
+
+<form method="post">
+    <input type="text" name="attempt_id" placeholder="Attempt ID">
+    <button type="submit">Show</button>
+</form>
+
+{% if not_found %}
+    <p>Attempt not found</p>
+{% endif %}
+
+{% if attempt_id and not not_found %}
+    <p>Attempt ID: {{ attempt_id }}</p>
+    <p>Score: {{ score }}</p>
+
+    {% if feedback %}
+        <p>Feedback: {{ feedback }}</p>
+    {% else %}
+        <p>No feedback yet</p>
+    {% endif %}
+{% endif %}
+
+<a href="/">Back</a>
+
+</body>
+</html>

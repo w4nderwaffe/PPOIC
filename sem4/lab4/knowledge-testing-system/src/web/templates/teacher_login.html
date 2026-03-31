@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Login</title>
+</head>
+<body>
+
+<h1>Teacher Login</h1>
+
+<form method="post">
+    <input type="password" name="password" placeholder="Password">
+    <button type="submit">Enter</button>
+</form>
+
+{% if error %}
+    <p>Wrong password</p>
+{% endif %}
+
+<a href="/">Back</a>
+
+</body>
+</html>

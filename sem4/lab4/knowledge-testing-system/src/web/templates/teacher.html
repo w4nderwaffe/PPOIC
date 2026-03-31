@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Panel</title>
+</head>
+<body>
+
+<h1>Teacher Panel</h1>
+
+<h2>Create Test</h2>
+
+<form method="post" action="/teacher/create" id="testForm">
+
+    <input type="text" name="test_id" placeholder="Test ID"><br>
+    <input type="text" name="title" placeholder="Title"><br><br>
+
+    <input type="hidden" name="q_count" id="q_count" value="0">
+
+    <div id="questions"></div>
+
+    <button type="button" onclick="addQuestion()">Add Question</button><br><br>
+
+    <button type="submit">Create Test</button>
+</form>
+
+<hr>
+
+<h2>Delete Test</h2>
+
+<form method="post" action="/teacher/delete">
+    <input type="text" name="test_id" placeholder="Test ID">
+    <button type="submit">Delete</button>
+</form>
+
+<hr>
+
+<h2>Add Feedback</h2>
+
+<form method="post" action="/teacher/feedback">
+    <input type="text" name="attempt_id" placeholder="Attempt ID"><br>
+    <input type="text" name="message" placeholder="Feedback"><br>
+    <button type="submit">Add feedback</button>
+</form>
+
+<br>
+<a href="/logout">Logout</a><br>
+<a href="/">Back</a>
+
+<script>
+let questionIndex = 0;
+
+function addQuestion() {
+    const qDiv = document.createElement("div");
+    qDiv.style.border = "1px solid black";
+    qDiv.style.margin = "10px";
+    qDiv.style.padding = "10px";
+
+    qDiv.innerHTML = `
+        <h3>Question ${questionIndex + 1}</h3>
+        <input type="text" name="q_text_${questionIndex}" placeholder="Question text"><br>
+
+        <input type="hidden" name="opt_count_${questionIndex}" id="opt_count_${questionIndex}" value="0">
+
+        <div id="options_${questionIndex}"></div>
+
+        <button type="button" onclick="addOption(${questionIndex})">Add Option</button><br>
+        <input type="number" name="correct_${questionIndex}" placeholder="Correct option number"><br>
+    `;
+
+    document.getElementById("questions").appendChild(qDiv);
+
+    document.getElementById("q_count").value = questionIndex + 1;
+
+    questionIndex++;
+}
+
+function addOption(qIndex) {
+    const optDiv = document.getElementById(`options_${qIndex}`);
+    const optCountInput = document.getElementById(`opt_count_${qIndex}`);
+
+    let optIndex = parseInt(optCountInput.value);
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.name = `opt_${qIndex}_${optIndex}`;
+    input.placeholder = `Option ${optIndex + 1}`;
+
+    optDiv.appendChild(input);
+    optDiv.appendChild(document.createElement("br"));
+
+    optCountInput.value = optIndex + 1;
+}
+</script>
+
+</body>
+</html>

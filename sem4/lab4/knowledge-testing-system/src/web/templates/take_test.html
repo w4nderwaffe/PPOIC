@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Take test</title>
+</head>
+<body>
+
+<h1>{{ test.title }}</h1>
+
+<form method="post">
+
+    <input type="hidden" name="student_id" value="s1">
+
+    {% for q in test.questions %}
+        <p>{{ q.text }}</p>
+
+        {% for opt in q.options %}
+            <label>
+                <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
+                {{ opt }}
+            </label><br>
+        {% endfor %}
+    {% endfor %}
+
+    <button type="submit">Submit</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tests</title>
+</head>
+<body>
+    <h1>Tests</h1>
+
+    {% if tests %}
+        <ul>
+            {% for t in tests %}
+                <li>
+                    {{ t.title }}
+                    <a href="/test/{{ t.id }}">Start</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tests available</p>
+    {% endif %}
+
+    <a href="/">Back</a>
+</body>
+</html>

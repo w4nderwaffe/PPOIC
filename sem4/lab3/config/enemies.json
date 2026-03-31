@@ -1,0 +1,184 @@
+{
+  "types": [
+    {
+      "id": 0,
+      "name": "TYPE 1",
+      "score": 10,
+      "hp": 1,
+      "fire_weight": 1.0,
+      "sway_amp": 0,
+      "sway_speed": 0.0,
+      "bob_amp": 0,
+      "bob_speed": 0.0,
+      "pattern": [
+        "00111100",
+        "01111110",
+        "11111111",
+        "11011011",
+        "10100101"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "TYPE 2",
+      "score": 15,
+      "hp": 1,
+      "fire_weight": 1.1,
+      "sway_amp": 2,
+      "sway_speed": 3.0,
+      "bob_amp": 0,
+      "bob_speed": 0.0,
+      "pattern": [
+        "00100100",
+        "01111110",
+        "11111111",
+        "10111101",
+        "01011010"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "TYPE 3",
+      "score": 20,
+      "hp": 1,
+      "fire_weight": 1.2,
+      "sway_amp": 0,
+      "sway_speed": 0.0,
+      "bob_amp": 2,
+      "bob_speed": 3.5,
+      "pattern": [
+        "00111100",
+        "01011010",
+        "11111111",
+        "01111110",
+        "10100101"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "TYPE 4",
+      "score": 25,
+      "hp": 1,
+      "fire_weight": 1.35,
+      "sway_amp": 2,
+      "sway_speed": 2.2,
+      "bob_amp": 1,
+      "bob_speed": 3.0,
+      "pattern": [
+        "01000010",
+        "00111100",
+        "11111111",
+        "01111110",
+        "01011010"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "TYPE 5",
+      "score": 30,
+      "hp": 1,
+      "fire_weight": 1.5,
+      "sway_amp": 3,
+      "sway_speed": 3.8,
+      "bob_amp": 0,
+      "bob_speed": 0.0,
+      "pattern": [
+        "00111100",
+        "11111111",
+        "10111101",
+        "01111110",
+        "01000010"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "TYPE 6",
+      "score": 35,
+      "hp": 2,
+      "fire_weight": 1.2,
+      "sway_amp": 0,
+      "sway_speed": 0.0,
+      "bob_amp": 2,
+      "bob_speed": 2.3,
+      "pattern": [
+        "01100110",
+        "11111111",
+        "01111110",
+        "11011011",
+        "10000001"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "TYPE 7",
+      "score": 40,
+      "hp": 1,
+      "fire_weight": 1.8,
+      "sway_amp": 3,
+      "sway_speed": 2.8,
+      "bob_amp": 1,
+      "bob_speed": 4.0,
+      "pattern": [
+        "00111100",
+        "01111110",
+        "11011011",
+        "11111111",
+        "01000010"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "TYPE 8",
+      "score": 45,
+      "hp": 2,
+      "fire_weight": 1.6,
+      "sway_amp": 4,
+      "sway_speed": 2.5,
+      "bob_amp": 2,
+      "bob_speed": 2.7,
+      "pattern": [
+        "01111110",
+        "11011011",
+        "11111111",
+        "01111110",
+        "10100101"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "TYPE 9",
+      "score": 50,
+      "hp": 2,
+      "fire_weight": 2.0,
+      "sway_amp": 2,
+      "sway_speed": 4.6,
+      "bob_amp": 3,
+      "bob_speed": 3.8,
+      "pattern": [
+        "00111100",
+        "11111111",
+        "01111110",
+        "11111111",
+        "10011001"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "TYPE 10",
+      "score": 60,
+      "hp": 3,
+      "fire_weight": 2.4,
+      "sway_amp": 4,
+      "sway_speed": 3.6,
+      "bob_amp": 3,
+      "bob_speed": 4.2,
+      "pattern": [
+        "01111110",
+        "11111111",
+        "11011011",
+        "11111111",
+        "10100101"
+      ]
+    }
+  ]
+}
